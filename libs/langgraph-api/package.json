@@ -1,35 +1,40 @@
 {
   "name": "@langchain/langgraph-api",
   "version": "0.0.56",
-  "type": "module",
   "engines": {
     "node": "^18.19.0 || >=20.16.0"
   },
   "license": "MIT",
-  "main": "./dist/cli/spawn.mjs",
+  "main": "./dist/cli/spawn.js",
+  "module": "./dist/cli/spawn.js",
   "files": [
     "dist/"
   ],
   "exports": {
     ".": {
-      "types": "./dist/cli/spawn.d.mts",
-      "default": "./dist/cli/spawn.mjs"
+      "types": "./dist/cli/spawn.d.ts",
+      "import": "./dist/cli/spawn.esm.js",
+      "require": "./dist/cli/spawn.js"
     },
     "./auth": {
-      "types": "./dist/auth/index.d.mts",
-      "default": "./dist/auth/index.mjs"
+      "types": "./dist/auth/index.d.ts",
+      "import": "./dist/auth/index.esm.js",
+      "require": "./dist/auth/index.js"
     },
     "./semver": {
-      "types": "./dist/semver/index.d.mts",
-      "default": "./dist/semver/index.mjs"
+      "types": "./dist/semver/index.d.ts",
+      "import": "./dist/semver/index.esm.js",
+      "require": "./dist/semver/index.js"
     },
     "./schema": {
-      "types": "./dist/graph/parser/index.d.mts",
-      "default": "./dist/graph/parser/index.mjs"
+      "types": "./dist/graph/parser/index.d.ts",
+      "import": "./dist/graph/parser/index.esm.js",
+      "require": "./dist/graph/parser/index.js"
     },
     "./experimental/embed": {
-      "types": "./dist/experimental/embed.d.mts",
-      "default": "./dist/experimental/embed.mjs"
+      "types": "./dist/experimental/embed.d.ts",
+      "import": "./dist/experimental/embed.esm.js",
+      "require": "./dist/experimental/embed.js"
     },
     "./package.json": "./package.json"
   },
@@ -40,7 +45,7 @@
   "scripts": {
     "clean": "rm -rf dist/ .turbo/ ./tests/graphs/.langgraph_api/",
     "build": "yarn turbo:command build:internal --filter=@langchain/langgraph-api",
-    "build:internal": "yarn clean && node scripts/build.mjs",
+    "build:internal": "yarn clean && node scripts/build.js",
     "dev": "tsx ./tests/utils.server.mts --dev",
     "prepack": "yarn run build",
     "typecheck": "tsc --noEmit",
