@@ -48,6 +48,10 @@ config
       });
       
       GRAPHS[graphId] = graph;
+      GRAPH_SPEC[graphId] = {
+        sourceFile: "Dhanajay",
+        exportSymbol: "Dhanajay",
+      };
       await Assistants.put(
         uuid.v5(graphId, NAMESPACE_GRAPH),
         {
