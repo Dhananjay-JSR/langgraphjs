@@ -69,10 +69,20 @@ export const StartServerSchema = z.object({
 });
 
 export async function startServerWithNew({
-  graphs,
-  config
+  registerGraphs,
+  config,
+  serverConfig
 }: {
-  graphs: Record<string,CompiledGraph<string> | CompiledGraphFactory<string>>;
+  registerGraphs: {
+    sourceFile: string;
+    graph: CompiledGraph<string> | CompiledGraphFactory<string>;
+    exportSymbol: string;
+  }
+  serverConfig: {
+    port: number;
+    host: string;
+    workers: number;
+  }
   config: LangGraphRunnableConfig;
 }) {
   const currentDir = process.cwd();
@@ -90,7 +100,7 @@ export async function startServerWithNew({
     );
   }
 
-  logger.info(`Initializing storage... DHANANAJY`);
+  logger.info(`Initializing storage...`);
   const callbacks = await Promise.all([
     opsConn.initialize(currentDir),
     checkpointer.initialize(currentDir),
@@ -109,7 +119,7 @@ export async function startServerWithNew({
   registerSdkLogger();
 
     await registerGraphFromReference({
-      graphs,
+      registerGraphs,
       config,
     });
 
@@ -190,14 +200,14 @@ export async function startServerWithNew({
   //   app.route("/", api);
   // }
 
-  const worker = 1;
+  const worker = serverConfig.workers;
   logger.info(`Starting ${worker} workers`);
   for (let i = 0; i < worker; i++) queue();
 
   return new Promise<{ host: string; cleanup: () => Promise<void> }>(
     (resolve) => {
       serve(
-        { fetch: app.fetch, port: 8000, hostname: "0.0.0.0" },
+        { fetch: app.fetch, port: serverConfig.port, hostname: serverConfig.host },
         (c) => {
           resolve({ host: `${c.address}:${c.port}`, cleanup });
         }

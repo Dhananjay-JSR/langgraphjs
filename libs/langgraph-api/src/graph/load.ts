@@ -36,37 +36,61 @@ export const getAssistantId = (graphId: string) => {
 };
 
 export async function registerGraphFromReference({
- graphs,
-config
+ registerGraphs,
+  config
 }: {
-  graphs: Record<string,CompiledGraph<string> | CompiledGraphFactory<string>>;
+  registerGraphs: {
+    sourceFile: string;
+    graph: CompiledGraph<string> | CompiledGraphFactory<string>;
+    exportSymbol: string;
+  }
   config: LangGraphRunnableConfig;
 }){
-  return await Promise.all(
-    Object.entries(graphs).map(async ([graphId, graph]) => {
-      logger.info(`Registering graph with id '${graphId}'`, {
-        graph_id: graphId,
-      });
-      
-      GRAPHS[graphId] = graph;
-      GRAPH_SPEC[graphId] = {
-        sourceFile: "Dhanajay",
-        exportSymbol: "Dhanajay",
-      };
+  const {sourceFile, graph, exportSymbol} = registerGraphs;
+  GRAPHS[exportSymbol] = graph;
+  GRAPH_SPEC[exportSymbol] = {
+    sourceFile: sourceFile,
+    exportSymbol: exportSymbol,
+  };
       await Assistants.put(
-        uuid.v5(graphId, NAMESPACE_GRAPH),
+        uuid.v5(exportSymbol, NAMESPACE_GRAPH),
         {
-          graph_id: graphId,
+          graph_id: exportSymbol,
           metadata: { created_by: "system" },
           config,
           context: {},
           if_exists: "do_nothing",
-          name: graphId,
+          name: exportSymbol,
         },
         undefined
       );
-    })
-  );
+    
+
+  // return await Promise.all(
+  //   Object.entries(registerGraphs).map(async ([graphId, compiledGraph]) => {
+  //     logger.info(`Registering graph with id '${graphId}'`, {
+  //       graph_id: graphId,
+  //     });
+      
+  //     GRAPHS[graphId] = compiledGraph;
+  //     GRAPH_SPEC[graphId] = {
+  //       sourceFile: "__internal__",
+  //       exportSymbol: "__internal__",
+  //     };
+  //     await Assistants.put(
+  //       uuid.v5(graphId, NAMESPACE_GRAPH),
+  //       {
+  //         graph_id: graphId,
+  //         metadata: { created_by: "system" },
+  //         config,
+  //         context: {},
+  //         if_exists: "do_nothing",
+  //         name: graphId,
+  //       },
+  //       undefined
+  //     );
+  //   })
+  // );
 }
 
 export async function registerFromEnv(

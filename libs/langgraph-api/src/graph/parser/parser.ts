@@ -392,7 +392,7 @@ export class SubgraphExtractor {
     options?: { strict?: boolean }
   ): Record<string, GraphSchema>[] {
     if (!target.length) throw new Error("No graphs found");
-
+    console.log(target)
     function getCommonPath(a: string, b: string) {
       const aSeg = path.normalize(a).split(path.sep);
       const bSeg = path.normalize(b).split(path.sep);
