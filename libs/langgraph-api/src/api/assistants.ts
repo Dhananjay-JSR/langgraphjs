@@ -127,7 +127,8 @@ api.get(
     const { xray } = c.req.valid("query");
 
     const config = getRunnableConfig(assistant.config);
-    const graph = await getGraph(assistant.graph_id, config);
+    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
+    const graph = (await (getGraph(assistant.graph_id, config) as any)).compile();
     const drawable = await graph.getGraphAsync({
       ...config,
       xray: xray ?? undefined,
@@ -146,7 +147,8 @@ api.get(
     const assistant = await Assistants.get(assistantId, c.var.auth);
 
     const config = getRunnableConfig(json.config);
-    const graph = await getGraph(assistant.graph_id, config);
+    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
+    const graph = (await (getGraph(assistant.graph_id, config) as any)).compile();
 
     const schema = await (async () => {
       const runtimeSchema = await getRuntimeGraphSchema(graph);
@@ -192,14 +194,14 @@ api.get(
     const assistant = await Assistants.get(assistantId, c.var.auth);
 
     const config = getRunnableConfig(assistant.config);
-    const graph = await getGraph(assistant.graph_id, config);
+    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
+    const graph = (await getGraph(assistant.graph_id, config) as any).compile();
 
     const result: Array<[name: string, schema: Record<string, any>]> = [];
     const subgraphsGenerator =
       "getSubgraphsAsync" in graph
         ? graph.getSubgraphsAsync.bind(graph)
-        : // @ts-expect-error older versions of langgraph don't have getSubgraphsAsync
-          graph.getSubgraphs.bind(graph);
+        : (graph as any).getSubgraphs.bind(graph);
 
     let graphSchemaPromise:
       | ReturnType<typeof getCachedStaticGraphSchema>
