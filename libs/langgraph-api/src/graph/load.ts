@@ -7,6 +7,7 @@ import type {
   BaseStore,
   CompiledGraph,
   LangGraphRunnableConfig,
+  StateGraph,
 } from "@langchain/langgraph";
 import { HTTPException } from "hono/http-exception";
 import { type CompiledGraphFactory, resolveGraph } from "./load.utils";
@@ -120,10 +121,7 @@ export async function getGraph(
   if (!GRAPHS[graphId])
     throw new HTTPException(404, { message: `Graph "${graphId}" not found` });
 
-  const compiled =
-    typeof GRAPHS[graphId] === "function"
-      ? await GRAPHS[graphId](config ?? { configurable: {} })
-      : GRAPHS[graphId];
+  const compiled = (GRAPHS[graphId] as unknown as StateGraph<any, any, any, any, any, any, any>).compile()
 
   if (typeof options?.checkpointer !== "undefined") {
     compiled.checkpointer = options?.checkpointer ?? undefined;
@@ -133,7 +131,7 @@ export async function getGraph(
 
   compiled.store = options?.store ?? store;
 
-  return compiled;
+  return compiled
 }
 
 export async function getCachedStaticGraphSchema(graphId: string) {

@@ -127,8 +127,7 @@ api.get(
     const { xray } = c.req.valid("query");
 
     const config = getRunnableConfig(assistant.config);
-    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
-    const graph = (await (getGraph(assistant.graph_id, config) as any)).compile();
+    const graph = await getGraph(assistant.graph_id, config);
     const drawable = await graph.getGraphAsync({
       ...config,
       xray: xray ?? undefined,
@@ -147,8 +146,7 @@ api.get(
     const assistant = await Assistants.get(assistantId, c.var.auth);
 
     const config = getRunnableConfig(json.config);
-    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
-    const graph = (await (getGraph(assistant.graph_id, config) as any)).compile();
+    const graph = await getGraph(assistant.graph_id, config);
 
     const schema = await (async () => {
       const runtimeSchema = await getRuntimeGraphSchema(graph);
@@ -195,8 +193,7 @@ api.get(
     const assistant = await Assistants.get(assistantId, c.var.auth);
 
     const config = getRunnableConfig(assistant.config);
-    //TODO: for some reason the graph is not compiled in the getGraph function, so we need to compile it here
-    const graph = (await getGraph(assistant.graph_id, config) as any).compile();
+    const graph = await getGraph(assistant.graph_id, config);
 
     const result: Array<[name: string, schema: Record<string, any>]> = [];
     const subgraphsGenerator =
