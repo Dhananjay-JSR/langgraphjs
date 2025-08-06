@@ -23,7 +23,7 @@ const OVERRIDE_RESOLVE = [
 
 const INFER_TEMPLATE_PATH = path.resolve(
   __dirname,
-  "./schema/types.template.mts"
+  "./schema/types.template.ts"
 );
 
 export class SubgraphExtractor {

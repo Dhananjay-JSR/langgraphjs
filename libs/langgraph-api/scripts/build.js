@@ -11,11 +11,9 @@ function $(strings) {
     });
   });
 }
-
 await $`yarn tsc --outDir dist`;
 
 await $`cp src/graph/parser/schema/types.template.ts dist/src/graph/parser/schema`;
-await $`rm -rf dist/src/graph/parser/schema/types.template.ts`;
 
 await $`mv dist/src/* dist`;
 await $`rm -rf dist/src dist/tests`;
